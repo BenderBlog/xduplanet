@@ -1,16 +1,29 @@
 <?php
 
 $repos = array(
-    'sspai' => 'http://sspai.com/feed', //少数派
-    'people_world' => 'http://www.people.com.cn/rss/world.xml', //人民网国际新闻
-    'geekpark' => 'https://rsshub.app/geekpark/breakingnews', //极客公园
-    '36kr' => 'https://www.36kr.com/feed', //36氪
-    'ithome' => 'https://www.ithome.com/rss/', //IT之家
-    'chuapp' => 'http://www.chuapp.com/feed', //触乐
-    //'feng' => 'https://www.feng.com/rss.xml', //威锋网
-    'cnbeta' => 'https://rsshub.app/cnbeta', //cnBeta
-    'sinafinance' => 'https://rsshub.app/sina/finance',
-    'eastday' => 'https://rsshub.app/eastday/sh',
-    'engadget' => 'https://rsshub.app/engadget-cn',
-    'ifanr' => 'https://rsshub.app/ifanr/app'
+    'hanwan' => "https://hawa130.com/feed",
+    'mukiispace' => 'https://www.mukiispace.tk/rss/feed.xml',
+    "reverier" => 'https://blog.woooo.tech/index.xml',
+    'ray' => 'http://ray.al/?feed=atom',
+    'xiaobei' => 'http://blog.xiaobeo.top/index.php/feed/',
+    'benderblog' => 'https://www.superbart.xyz/index.xml',
+    'shifeiti' => 'https://www.shifeiti.com/atom.xml',
+    'xeonds' => 'https://xeonds.github.io/atom.xml',
+    'orangecheers' => 'https://honoka.tech/atom.xml',
+    'ksfu' => 'https://blog.ksfu.top/atom.xml',
+    'deanoffice' => 'https://rsshub.app/xidian/jwc/tzgg',
+    'xinhua' => 'https://rsshub.app/news/whxw',
+    'southern' => 'https://rsshub.app/infzm/2',
+    'solidot' => 'https://www.solidot.org/index.rss',
+    'linuxcn' => 'https://linux.cn/rss.xml',
+    'lianhe' => 'https://rsshub.app/zaobao/realtime/china',
+    'tvb' => 'https://rsshub.app/tvb/news/focus/sc',
+    'tdm' => "https://cdn.tdm.com.mo/xml/rss/zh_news.xml",
+    'kbs' => 'https://rsshub.app/kbs/news/all/c',
+    'kcna' => 'https://rsshub.app/kcna/cn',
+    'aljazeera' => 'https://rsshub.app/aljazeera/chinese/news',
+    'sputnik' => 'https://rsshub.app/sputniknews/news/chinese',
+    'coolapk' => 'https://rsshub.app/coolapk/toutiao',
+    'thbwiki' => 'https://rsshub.app/thwiki/calendar',
+    'ft' => 'https://rsshub.app/ft/chinese/hotstoryby7day',
 );

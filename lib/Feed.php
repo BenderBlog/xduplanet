@@ -5,7 +5,7 @@
  *
  * @copyright  Copyright (c) 2008 David Grudl
  * @license    New BSD License
- * @version    1.4
+ * @version    1.5
  */
 class Feed
 {
@@ -15,9 +15,29 @@ class Feed
 	/** @var string */
 	public static $cacheDir;
 
+	/** @var string */
+	public static $userAgent = 'FeedFetcher-Google';
+
 	/** @var SimpleXMLElement */
 	protected $xml;
 
+	/**
+	 * Check type of source.
+	 * @param  string
+	 * @param  string
+	 * @param  string
+	 * @return Feed
+	 * @throws FeedException
+	 */
+	public static function checktype($url, $user = null, $pass = null)
+	{
+		$xml = self::loadXml($url, $user, $pass);
+		if ($xml->channel) {
+			return 'RSS';
+		} else {
+			return 'Atom';
+		}
+	}
 
 	/**
 	 * Loads RSS or Atom feed.
@@ -78,7 +98,8 @@ class Feed
 			// converts namespaces to dotted tags
 			self::adjustNamespaces($item);
 
-			// generate 'timestamp' tag
+			// generate 'url' & 'timestamp' tags
+			$item->url = (string) $item->link;
 			if (isset($item->{'dc:date'})) {
 				$item->timestamp = strtotime($item->{'dc:date'});
 			} elseif (isset($item->pubDate)) {
@@ -99,8 +120,9 @@ class Feed
 			throw new FeedException('Invalid feed.');
 		}
 
-		// generate 'timestamp' tag
+		// generate 'url' & 'timestamp' tags
 		foreach ($xml->entry as $entry) {
+			$entry->url = (string) $entry->link['href'];
 			$entry->timestamp = strtotime($entry->updated);
 		}
 		$feed = new self;
@@ -147,7 +169,7 @@ class Feed
 			return (string) $xml;
 		}
 
-		$arr = array();
+		$arr = [];
 		foreach ($xml->children() as $tag => $child) {
 			if (count($xml->$tag) === 1) {
 				$arr[$tag] = $this->toArray($child);
@@ -188,7 +210,7 @@ class Feed
 			throw new FeedException('Cannot load feed.');
 		}
 
-		return new SimpleXMLElement($data, LIBXML_NOWARNING | LIBXML_NOERROR);
+		return new SimpleXMLElement($data, LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOCDATA);
 	}
 
 
@@ -208,12 +230,12 @@ class Feed
 			if ($user !== null || $pass !== null) {
 				curl_setopt($curl, CURLOPT_USERPWD, "$user:$pass");
 			}
-			$user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36";
-			curl_setopt($curl, CURLOPT_USERAGENT, $user_agent); // some feeds require a user agent
+			curl_setopt($curl, CURLOPT_USERAGENT, self::$userAgent); // some feeds require a user agent
 			curl_setopt($curl, CURLOPT_HEADER, false);
 			curl_setopt($curl, CURLOPT_TIMEOUT, 20);
 			curl_setopt($curl, CURLOPT_ENCODING, '');
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); // no echo, just return result
+			curl_setopt($curl, CURLOPT_USERAGENT, '');
 			if (!ini_get('open_basedir')) {
 				curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true); // sometime is useful :)
 			}
@@ -225,12 +247,12 @@ class Feed
 		} else {
 			$context = null;
 			if ($user !== null && $pass !== null) {
-				$options = array(
-					'http' => array(
+				$options = [
+					'http' => [
 						'method' => 'GET',
 						'header' => 'Authorization: Basic ' . base64_encode($user . ':' . $pass) . "\r\n",
-					)
-				);
+					],
+				];
 				$context = stream_context_create($options);
 			}
 
@@ -247,6 +269,9 @@ class Feed
 	private static function adjustNamespaces($el)
 	{
 		foreach ($el->getNamespaces(true) as $prefix => $ns) {
+			if ($prefix === '') {
+				continue;
+			}
 			$children = $el->children($ns);
 			foreach ($children as $tag => $content) {
 				$el->{$prefix . ':' . $tag} = $content;
